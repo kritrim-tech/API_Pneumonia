@@ -3,7 +3,7 @@ import torch
 from PIL import Image
 import numpy as np
 from flask_cors import CORS
-
+import cv2
 app = Flask(__name__)
 CORS(app)
 
@@ -19,18 +19,18 @@ def hello():
 def predict():
 
     # load image
-    img = Image.open(request.files['file'].stream).convert(
-        'RGB').resize((224, 224))
+    img = Image.open(request.files['file'].stream) #.convert('RGB').resize((224, 224))
+    img = cv2.cvtColor(img_1, cv2.COLOR_BGR2GRAY).resize(224, 224)
     img = np.array(img)
-    img = torch.FloatTensor(img.transpose((2, 0, 1)) / 255)
+    img = torch.FloatTensor(img.transpose((0, 1)) / 255).unsqueeze(0)
 
     # get predictions
     pred = net(img.unsqueeze(0)).squeeze()
     pred_probas = torch.softmax(pred, axis=0)
 
     return {
-        'malignant': pred_probas[1].item(),
-        'bening': pred_probas[0].item()
+        'pneumonia': pred_probas[1].item(),
+        'normal': pred_probas[0].item()
     }
 
 
