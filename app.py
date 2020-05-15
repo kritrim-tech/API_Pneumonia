@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-net = torch.jit.load('my_model.zip')
+net = torch.jit.load('ResNet_18.zip')
 
 
 @app.route('/')
